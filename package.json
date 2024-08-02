@@ -1,0 +1,34 @@
+{
+  "name": "bienes-raices_perfectsale",
+  "version": "1.0.0",
+  "description": "Venta y compra de bienes y raices",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "server": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/IngMtzB/bienes-raices_perfectsale.git"
+  },
+  "keywords": [
+    "MVC",
+    "Tailwind",
+    "Node.js",
+    "Express"
+  ],
+  "author": "Carlos Alberto Martinez Barrera",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/IngMtzB/bienes-raices_perfectsale/issues"
+  },
+  "homepage": "https://github.com/IngMtzB/bienes-raices_perfectsale#readme",
+  "dependencies": {
+    "express": "^4.19.2",
+    "pug": "^3.0.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.4"
+  }
+}
