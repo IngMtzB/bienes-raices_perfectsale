@@ -10,6 +10,9 @@ app.set('views', './views');
 //Routing
 app.use('/auth', userRoutes);
 
+//carpeta pública
+app.use(express.static('public'));
+
 const port = 3000;
 //run app
 app.listen(port,()=>{
