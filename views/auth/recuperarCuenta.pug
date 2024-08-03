@@ -16,10 +16,6 @@ block contenido
                             div
                                 label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="correo") Correo electrónico
                                 input#correo.w-full.px-3.py-2.border.border-gray-300(placeholder="jhon.doe@midominio.com" type="email" name="correo" required)
-                            div
-                                label.block.text-sm.uppercase.text-gray-500.mb-2.font-bold(for="password") Contarseña
-                                input#correo.w-full.px-3.py-2.border.border-gray-300(placeholder="Mínimo 8 caracteres" type="password" name="password" required)
-                            input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Iniciar sesión")
+                            input(class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 cursor-pointer" type="submit" value="Recuperar cuenta")
                             .flex.items-center.justify-between  
-                                a.text-gray-500(href="/auth/registro") Crear cuenta
-                                a.text-gray-500(href="/auth/recuperarCuenta") Recuperar cuenta
+                                a.text-gray-500(href="/auth/login") Iniciar sesión
