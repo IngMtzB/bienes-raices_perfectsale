@@ -1,7 +1,21 @@
 import express from 'express';
 import userRoutes from './routes/userRoutes.js';
+import dbconnection from './config/db.js';
 
 const app = express();
+
+//Enable reading data from forms
+app.use(express.urlencoded({extended:true}));
+
+//connection to db
+try{
+    await dbconnection.authenticate();
+    dbconnection.sync();
+    console.log('Connection has been established successfully.');
+}catch(error){
+    console.error('Unable to connect to the database:', error);
+}
+
 
 //pug
 app.set('view engine', 'pug');
