@@ -2,6 +2,8 @@ import { check, validationResult } from "express-validator";
 
 import Usuarios from "../models/Ususarios.js";
 import { generateID } from "../utilities/tokens.js";
+import { emailRegistro } from "../utilities/emails.js";
+
 
 const numberOfDaysToAdd = 3;
 
@@ -13,6 +15,8 @@ const formularioLogin = (req,res)=>{
 }
 
 const formularioRegistro = (req,res)=>{
+    console.log(req.generateToken)
+
     res.render('auth/registro',{
         pagina: 'Crear cuenta',
     })
@@ -71,14 +75,54 @@ const registrar = async (req,res)=>{
     }
 
     req.body.token = generateID();
-
+    
     const usuario = await Usuarios.create(req.body);
+
+    //Used to sen email registry
+    const emailSended = emailRegistro({
+        nombre: usuario.nombre,
+        correo: usuario.correo,
+        token: usuario.token
+    });
+    if(!emailSended){
+        return res.render('auth/registro',{
+            pagina: 'Error al enviar correo',
+            errores: [{msg:'Tuvimos problemas para enviar el correo de registro, por favor, contacta a un administrador'}],
+            usuario: {
+                nombre: nombre,
+                correo: correo 
+            }
+        });
+    }
+
 
     res.render('templates/mensaje',{
         pagina: 'Cuenta creada exitosamente',
         mensaje: 'Hemos enviado un enlace de confirmación, revisa tu correo para activar tu cuenta'
     });
     
+}
+
+const confirmarCorreo = async (req,res)=>{
+    const {token} = req.params
+    //Verificar token válido
+    const usuario = await Usuarios.findOne({where: {token}})
+    if(!usuario){
+        return res.render('auth/confirmarCuenta',{
+            pagina: 'Error al confirmar cuenta',
+            mensaje: 'Error al validar token, si el problema persiste, contacta a tu administrador',
+            error: true
+        })
+    }
+    //Confirmar la cuenta
+    usuario.token = null;
+    usuario.confirmado = 1;
+    //guarda cambios en la base de datos
+    await usuario.save();
+    res.render('auth/confirmarCuenta',{
+        pagina: 'Confirmada correctamente',
+        mensaje: '¡Cuenta confirmada exitosamente!'
+    });
 }
 
 const formularioRecuperarPassword = (req,res)=>{
@@ -92,5 +136,7 @@ export {
     formularioLogin,
     formularioRegistro,
     registrar,
+    confirmarCorreo,
     formularioRecuperarPassword
+    
 };

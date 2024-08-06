@@ -1,11 +1,22 @@
 import express from 'express';
+import cookieParser from 'cookie-parser';
+
+import {doubleCsrfProtection, generateToken} from "./middleware/doublecsrf.js"
 import userRoutes from './routes/userRoutes.js';
 import dbconnection from './config/db.js';
+
+const backendPort = process.env.BACKEND_PORT || 3000;
+const backendUrl = process.env.BACKEND_URL
 
 const app = express();
 
 //Enable reading data from forms
 app.use(express.urlencoded({extended:true}));
+
+//Habilitado cookie parser
+app.use(doubleCsrfProtection);
+
+
 
 //connection to db
 try{
@@ -27,8 +38,8 @@ app.use('/auth', userRoutes);
 //carpeta pública
 app.use(express.static('public'));
 
-const port = 3000;
+
 //run app
-app.listen(port,()=>{
-    console.log("listening on http://localhost:3000");
+app.listen(backendPort,()=>{
+    console.log(`Listening on ${backendUrl}:${backendPort}/auth/login`);
 });

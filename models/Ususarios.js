@@ -21,7 +21,7 @@ const Usuarios = db.define('usuarios', {
         type: DataTypes.STRING(60),
         allowNull: false
     },
-    activo: {
+    confirmado: {
         type: DataTypes.INTEGER,
         defaultValue: 0
     },
