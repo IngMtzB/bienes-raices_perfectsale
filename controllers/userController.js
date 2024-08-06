@@ -3,6 +3,7 @@ import { check, validationResult } from "express-validator";
 import Usuarios from "../models/Ususarios.js";
 import { generateID } from "../utilities/tokens.js";
 import { emailRegistro } from "../utilities/emails.js";
+import { generateToken } from "../index.js";
 
 
 const numberOfDaysToAdd = 3;
@@ -15,10 +16,10 @@ const formularioLogin = (req,res)=>{
 }
 
 const formularioRegistro = (req,res)=>{
-    console.log(req.generateToken)
-
+    const tokenGenerated = generateToken(req, res);
     res.render('auth/registro',{
         pagina: 'Crear cuenta',
+        csrfToken: tokenGenerated
     })
 }
 // ORM register

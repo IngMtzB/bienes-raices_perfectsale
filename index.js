@@ -1,7 +1,7 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import { doubleCsrf } from "csrf-csrf";
 
-import {doubleCsrfProtection, generateToken} from "./middleware/doublecsrf.js"
 import userRoutes from './routes/userRoutes.js';
 import dbconnection from './config/db.js';
 
@@ -14,8 +14,21 @@ const app = express();
 app.use(express.urlencoded({extended:true}));
 
 //Habilitado cookie parser
+app.use(cookieParser());
+const {
+    invalidCsrfTokenError, // This is just for convenience if you plan on making your own middleware.
+    generateToken, // Use this in your routes to provide a CSRF hash + token cookie and token.
+    validateRequest, // Also a convenience if you plan on making your own middleware.
+    doubleCsrfProtection, // This is the default CSRF protection middleware.
+  } = doubleCsrf({
+    getSecret: () => process.env.CSRF_SECRET,
+    getTokenFromRequest: req => req.body.csrfToken,
+    cookieName: process.env.NODE_ENV === 'production' ? '__Host-prod.x-csrf-token' : '_csrf',
+    cookieOptions: {
+      secure: process.env.NODE_ENV === 'production' // Enable for HTTPS in production
+    }
+  });
 app.use(doubleCsrfProtection);
-
 
 
 //connection to db
@@ -43,3 +56,7 @@ app.use(express.static('public'));
 app.listen(backendPort,()=>{
     console.log(`Listening on ${backendUrl}:${backendPort}/auth/login`);
 });
+
+export {
+    generateToken
+}
