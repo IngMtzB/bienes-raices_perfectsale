@@ -1,5 +1,6 @@
 import express from 'express';
-import sesison from 'express-session';
+import csurf from 'csurf';
+import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/userRoutes.js';
 import dbconnection from './config/db.js';
@@ -12,14 +13,10 @@ const app = express();
 //Enable reading data from forms
 app.use(express.urlencoded({extended:true}));
 
-//Enable session where 
-app.use(sesison(
-  {secret:'thisismysecretlikevictoria',
-    cookie:{
-      sameSite: 'strict'
-    }
-  }
-))
+//Habilitar session
+app.use(cookieParser());
+//Habilitar CSRF
+app.use(csurf({cookie: true}));
 
 //connection to db
 try{

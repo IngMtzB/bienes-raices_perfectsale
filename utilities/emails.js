@@ -34,6 +34,41 @@ const emailRegistro = async (data)=>{
     }    
 }
 
+const emailPasswordRecovery = async (data)=>{
+    const fullUrl = `${process.env.BACKEND_URL}:${process.env.BACKEND_PORT ?? 3000}`
+    const redirect_server = `${fullUrl}/auth/cambioPassword/`;
+    const transport = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: process.env.EMAIL_PORT,
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+      const {nombre, correo, token} = data
+
+      //envío de email
+    try{
+        await transport.sendMail({
+            from: 'Bienesraices-Perfectsale.com ',
+            to: correo,
+            subject: 'Restablece tu contraseña en Bienesraices-Perfectsale.com',
+            text: 'Restablece tu contraseña en Bienesraices-Perfectsale.com',
+            html: `
+                    <p>Hemos enviado este correo para que puedas recuperar tu cuenta.</p>
+                    <p>Para restablecer la contraseña, accede al siguiente enlace: 
+                        <a href="${redirect_server+token}">Confirmar cuenta</a>
+                    </p>
+                    <p>Si no realizaste ningúuna solicitud de restablecimiento dee contraseña, ignora este correo</p>
+                `
+          });
+          return true;
+    }catch (error){
+        return false;
+    }    
+}
+
 export {
-    emailRegistro
+    emailRegistro,
+    emailPasswordRecovery
 }
