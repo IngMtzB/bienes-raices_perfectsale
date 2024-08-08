@@ -2,7 +2,7 @@ import { check, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
 
 import Usuarios from "../models/Ususarios.js";
-import { generateID } from "../utilities/tokens.js";
+import { generateID,generateJWT } from "../utilities/tokens.js";
 import { emailRegistro,emailPasswordRecovery } from "../utilities/emails.js";
 
 const numberOfDaysToAdd = 3;
@@ -10,8 +10,65 @@ const numberOfDaysToAdd = 3;
 const formularioLogin = (req, res) => {
     res.render('auth/login', {
         pagina: 'Iniciar sesión',
+        csrfToken: req.csrfToken(),
         autenticado: false
     })
+}
+
+const autenticar = async (req, res) => {
+    //Valdiando inputs
+    await check('correo').isEmail().withMessage('Formato de email inválido').run(req);
+    await check('password').notEmpty().withMessage('La contraseña es obligatoria').run(req);
+
+    const resultadoValdiacion = validationResult(req);
+
+    if (!resultadoValdiacion.isEmpty()) {
+        return res.render('auth/login', {
+            pagina: 'Iniciar sesión',
+            csrfToken: req.csrfToken(),
+            errores: resultadoValdiacion.array()
+        });
+    }
+
+    //Verificar que el usuario exista
+    const { correo, password } = req.body;
+    const usuario = await Usuarios.findOne({ where: { correo } });
+    if (!usuario) {
+        return res.render('auth/login', {
+            pagina: 'Iniciar sesión',
+            csrfToken: req.csrfToken(),
+            errores: [{ msg: 'El usuario no existe' }]
+        });
+    }
+
+    //Verificar si el usuario está confirmado
+    if(!usuario.confirmado){
+        return res.render('auth/login', {
+            pagina: 'Iniciar sesión',
+            csrfToken: req.csrfToken(),
+            errores: [{ msg: 'La cuenta no ha sido confirmada, revisa tu correo' }]
+        });
+    }
+
+    //Verificar la contraseña
+    if (!usuario.verificarPassword(password)) {
+        return res.render('auth/login', {
+            pagina: 'Iniciar sesión',
+            csrfToken: req.csrfToken(),
+            errores: [{ msg: 'Contraseña incorrecta' }]
+        });
+    }
+
+    //Autenticar usuario
+    const token = generateJWT({id: usuario.id, nombre: usuario.nombre, correo: usuario.correo});
+
+    //Almacen de cookies
+    return res.cookie('_token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production' ?? false,
+        //sameSite: true,
+        maxAge: 3 * 60 * 60 * 1000 //3 horas
+    }).redirect('/admin');
 }
 
 const formularioRegistro = (req, res) => {
@@ -228,6 +285,7 @@ const resetPassword = async (req, res) => {
 
 export {
     formularioLogin,
+    autenticar,
     formularioRegistro,
     registrar,
     confirmarCorreo,
