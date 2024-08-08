@@ -3,6 +3,8 @@ import csurf from 'csurf';
 import cookieParser from 'cookie-parser';
 
 import userRoutes from './routes/userRoutes.js';
+import propiedadesRoutes from './routes/propiedadesRoutes.js';
+
 import dbconnection from './config/db.js';
 
 const backendPort = process.env.BACKEND_PORT || 3000;
@@ -34,6 +36,7 @@ app.set('views', './views');
 
 //Routing
 app.use('/auth', userRoutes);
+app.use('/', propiedadesRoutes);
 
 //carpeta pública
 app.use(express.static('public'));

@@ -68,7 +68,7 @@ const autenticar = async (req, res) => {
         secure: process.env.NODE_ENV === 'production' ?? false,
         //sameSite: true,
         maxAge: 3 * 60 * 60 * 1000 //3 horas
-    }).redirect('/admin');
+    }).redirect('/dashboard');
 }
 
 const formularioRegistro = (req, res) => {

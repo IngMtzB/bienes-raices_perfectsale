@@ -1,0 +1,21 @@
+
+header.bg-sky-800.text-white.p-4
+    .container.mx-auto.flex.justify-between.items-center
+
+        h1.text-2xl.text-white.font-extrabold.text-center Bienes 
+            span.font-normal Raices
+        
+        nav(class="my-5 text-sm md:flex md:items-center md:gap-3 font-bol text-whhite")
+            ul.flex
+                if user
+                    li.mx-2
+                        a(href="/propiedades/crear") Publicar propiedades
+                    li.mx-2
+                        a(href="/propiedades") Propiedades
+                    li.mx-2
+                        a(href="/auth/logout") Cerrar sesión
+                else
+                    li.mx-2
+                        a(href="/auth/login") Iniciar sesión
+                    li.mx-2
+                        a(href="/auth/registro") Crear cuenta
